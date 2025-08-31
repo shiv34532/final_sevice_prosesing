@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FINAL Platform — Frontend</title>
+
+  <!-- Bootstrap CSS + Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body class="bg-light">
+
+  <!-- Cookie Consent Banner (Shows First) -->
+  <div id="cookieBanner" class="cookie-banner shadow d-none">
+    <div class="container d-flex align-items-center gap-3">
+      <div>
+        <i class="bi bi-shield-check text-success me-2"></i>
+        We use cookies for essential features (login, preferences). See our
+        <a href="#" class="link-danger" onclick="showSection('terms')">Terms</a>.
+      </div>
+      <div class="ms-auto d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm" onclick="declineCookies()">Decline</button>
+        <button class="btn btn-danger btn-sm" onclick="acceptCookies()">Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Warning Modal (Shows if cookies declined) -->
+  <div class="modal fade" id="securityWarningModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-warning">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Security & Functionality Limited</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          You declined cookies. Some features (login, remembering Terms acceptance, media uploads) may not work.
+          You can enable cookies later from the Security Center.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-danger" onclick="acceptCookiesFromWarning()">Enable Cookies</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms & Conditions First-Visit Modal -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Terms & Conditions</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6 class="fw-bold text-danger">FINAL Platform - User Agreement</h6>
+          <p class="text-muted">By using this platform you agree to our Terms, Privacy, and acceptable use.</p>
+          <ul class="text-muted small">
+            <li>Provide accurate information</li>
+            <li>Respect privacy and IP rights</li>
+            <li>No harmful activities</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-danger" onclick="acceptTerms()">I Agree</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step-by-Step User Interface Guide (offcanvas) -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="uiGuide">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title"><i class="bi bi-joystick me-2"></i>Quick Tour</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="guideSteps" class="vstack gap-3">
+        <!-- Steps will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top shadow-sm">
+    <div class="container-fluid">
+      <!-- Logo -->
+      <a class="navbar-brand fw-bold" href="#" onclick="showSection('home')">
+        <i class="bi bi-gem text-warning me-2 fs-4"></i>FINAL
+      </a>
+
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('home')"><i class="bi bi-house-door me-1"></i>Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('contact')"><i class="bi bi-envelope me-1"></i>Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('terms')"><i class="bi bi-file-text me-1"></i>Terms</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('admin')"><i class="bi bi-gear me-1"></i>Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('security')"><i class="bi bi-shield-check me-1"></i>Security</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('media')"><i class="bi bi-collection-play me-1"></i>Media</a></li>
+        </ul>
+
+        <!-- User Status -->
+        <div id="userStatus" class="text-white small me-3">
+          <i class="bi bi-person-circle me-1"></i><span>Guest</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
+          <button class="btn btn-outline-light btn-sm" data-bs-toggle="offcanvas" data-bs-target="#uiGuide">
+            <i class="bi bi-life-preserver"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-fluid" style="padding-top: 90px; padding-bottom: 120px;">
+    <!-- HOME -->
+    <section id="home" class="content-section">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h1 class="display-5 text-danger fw-bold mb-2">Welcome to <span class="text-warning">FINAL</span></h1>
+        <p class="lead text-muted">Complete platform — frontend demo for GitHub Pages. Data stored locally (browser).</p>
+        <div class="d-flex gap-2">
+          <button class="btn btn-danger" onclick="showSection('contact')"><i class="bi bi-envelope me-1"></i>Contact Us</button>
+          <button class="btn btn-outline-danger" onclick="showSection('terms')"><i class="bi bi-file-text me-1"></i>Terms</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="content-section d-none">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h2 class="text-danger fw-bold"><i class="bi bi-envelope-heart me-2"></i>Contact Us</h2>
+        <form id="contactForm" onsubmit="submitContactForm(event)" class="mt-3">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">First Name *</label><input id="firstName" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Last Name *</label><input id="lastName" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Email *</label><input id="email" type="email" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Subject *</label>
+              <select id="subject" class="form-select" required>
+                <option value="">Choose...</option>
+                <option value="general">General</option>
+                <option value="support">Support</option>
+                <option value="partnership">Partnership</option>
+                <option value="feedback">Feedback</option>
+              </select>
+            </div>
+            <div class="col-12"><label class="form-label">Message *</label><textarea id="message" rows="5" class="form-control" required></textarea></div>
+          </div>
+          <div class="text-end mt-3">
+            <button class="btn btn-outline-secondary" type="reset">Reset</button>
+            <button class="btn btn-danger" type="submit"><i class="bi bi-send me-1"></i>Send</button>
+          </div>
+        </form>
+        <div id="successMessage" class="alert alert-success mt-3 d-none">
+          <i class="bi bi-check-circle me-2"></i>Message stored in browser (demo).
+        </div>
+      </div>
+    </section>
+
+    <!-- TERMS -->
+    <section id="terms" class="content-section d-none">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h2 class="text-danger fw-bold"><i class="bi bi-file-text me-2"></i>Terms & Conditions</h2>
+        <p class="text-muted">Last updated: <strong>August 31, 2025</strong></p>
+        <p class="text-muted">By accessing and using FINAL platform, you accept the Terms and Privacy Policy.</p>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="content-section d-none">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h2 class="text-success fw-bold"><i class="bi bi-shield-lock me-2"></i>Admin Panel (demo)</h2>
+        <div class="row g-3 my-2">
+          <div class="col-md-3"><div class="card text-center"><div class="card-body"><div class="text-muted">Total Users</div><div id="totalUsers" class="h3 mb-0">0</div></div></div></div>
+          <div class="col-md-3"><div class="card text-center"><div class="card-body"><div class="text-muted">Contact Messages</div><div id="totalMessages" class="h3 mb-0">0</div></div></div></div>
+          <div class="col-md-3"><div class="card text-center"><div class="card-body"><div class="text-muted">Active Projects</div><div id="activeProjects" class="h3 mb-0">0</div></div></div></div>
+        </div>
+
+        <h5 class="mt-4">Recent Messages</h5>
+        <div id="messagesList" class="vstack gap-3"></div>
+
+        <h5 class="mt-4">Recent Users</h5>
+        <div id="usersList" class="vstack gap-2"></div>
+      </div>
+    </section>
+
+    <!-- SECURITY CENTER SECTION -->
+    <section id="security" class="content-section d-none">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h2 class="text-primary fw-bold"><i class="bi bi-shield-check me-2"></i>Security Center</h2>
+        <div class="vstack gap-3 mt-3">
+          <div class="d-flex align-items-center justify-content-between p-3 border rounded">
+            <div><strong>Cookie Consent</strong><div class="text-muted small">Required for login and preferences</div></div>
+            <div>
+              <span id="cookieStateBadge" class="badge text-bg-secondary">Unknown</span>
+              <button class="btn btn-outline-primary btn-sm ms-2" onclick="acceptCookies()">Enable</button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="declineCookies()">Disable</button>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between p-3 border rounded">
+            <div><strong>Quick Security Scan</strong><div class="text-muted small">Checks basic settings</div></div>
+            <div><button class="btn btn-dark btn-sm" onclick="runSecurityScan()">Run</button></div>
+          </div>
+        </div>
+        <pre id="securityScanOutput" class="mt-3 bg-light p-3 rounded small"></pre>
+      </div>
+    </section>
+
+    <!-- MEDIA MANAGER SECTION -->
+    <section id="media" class="content-section d-none">
+      <div class="bg-white p-5 rounded shadow-sm mx-3">
+        <h2 class="text-info fw-bold"><i class="bi bi-collection-play me-2"></i>Media Manager</h2>
+        <form id="mediaForm" class="mt-3" onsubmit="uploadMedia(event)" enctype="multipart/form-data">
+          <div class="row g-2">
+            <div class="col-md-6"><input id="mediaFile" type="file" class="form-control"></div>
+            <div class="col-md-6 text-end"><button class="btn btn-info"><i class="bi bi-upload me-1"></i>Upload (demo)</button></div>
+          </div>
+        </form>
+        <div id="mediaList" class="row row-cols-2 row-cols-md-4 g-3 mt-2"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-dark-subtle fixed-bottom py-2">
+    <div class="container d-flex justify-content-between small">
+      <div><i class="bi bi-gem text-danger"></i> © 2025 FINAL</div>
+      <div>
+        <a href="#" class="text-danger me-3" onclick="showSection('terms')"><i class="bi bi-shield-lock me-1"></i>Privacy</a>
+        <a href="mailto:admin@example.com" class="text-danger"><i class="bi bi-headset me-1"></i>Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="bi bi-box-arrow-in-right me-2"></i>Admin Login</h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form onsubmit="adminLogin(event)">
+            <div class="mb-3"><label class="form-label">Email</label><input id="adminEmail" type="email" class="form-control" value="admin@example.com" required></div>
+            <div class="mb-3"><label class="form-label">Password</label><input id="adminPassword" type="password" class="form-control" required></div>
+            <div class="text-end"><button class="btn btn-danger"><i class="bi bi-shield-check me-1"></i>Login</button></div>
+          </form>
+          <div class="alert alert-info mt-3 small">Demo admin: admin@example.com (any password works locally)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border-warning">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2"></i>Join FINAL</h5>
+          <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="signupForm" onsubmit="registerUser(event)">
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label">Full Name</label><input id="signupName" class="form-control" required></div>
+              <div class="col-md-6"><label class="form-label">Email</label><input id="signupEmail" type="email" class="form-control" required></div>
+              <div class="col-md-6"><label class="form-label">Password</label><input id="signupPassword" type="password" class="form-control" required></div>
+              <div class="col-md-6"><label class="form-label">Confirm Password</label><input id="confirmPassword" type="password" class="form-control" required></div>
+            </div>
+            <div class="form-check mt-3">
+              <input class="form-check-input" id="agreeTermsSignup" type="checkbox" required>
+              <label class="form-check-label" for="agreeTermsSignup">I agree to the <a href="#" onclick="showSection('terms')">Terms</a></label>
+            </div>
+            <div class="text-end mt-3"><button class="btn btn-warning fw-bold"><i class="bi bi-person-plus me-1"></i>Create Account</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+  <!-- App JS -->
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
